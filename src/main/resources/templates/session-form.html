@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Add Session</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #222;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        select,
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        select:focus,
+        input:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .button-section {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 15px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #842029;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .required {
+            color: red;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Add New Session</h1>
+
+
+    <!-- ERROR MESSAGE -->
+
+    <div th:if="${error}"
+         class="error-message"
+         th:text="${error}">
+    </div>
+
+
+    <!--
+        IMPORTANT:
+        Do NOT use:
+
+        th:object="${session}"
+
+        because "session" is a reserved Thymeleaf variable.
+    -->
+
+    <form th:action="@{/sessions/save}"
+          method="post">
+
+
+        <!-- ========================= -->
+        <!-- SUBJECT -->
+        <!-- ========================= -->
+
+        <div class="form-group">
+
+            <label for="subjectId">
+                Select Subject
+                <span class="required">*</span>
+            </label>
+
+
+            <select id="subjectId"
+                    name="subjectId"
+                    required>
+
+                <option value="">
+                    -- Select Subject --
+                </option>
+
+
+                <option th:each="subject : ${subjects}"
+                        th:value="${subject.subjectId}"
+                        th:text="${subject.subjectCode + ' - ' + subject.subjectName}">
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- SESSION DATE -->
+        <!-- ========================= -->
+
+        <div class="form-group">
+
+            <label for="sessionDate">
+
+                Session Date
+
+                <span class="required">*</span>
+
+            </label>
+
+
+            <input type="date"
+                   id="sessionDate"
+                   name="sessionDate"
+                   required>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- START TIME -->
+        <!-- ========================= -->
+
+        <div class="form-group">
+
+            <label for="startTime">
+
+                Start Time
+
+                <span class="required">*</span>
+
+            </label>
+
+
+            <input type="time"
+                   id="startTime"
+                   name="startTime"
+                   required>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- END TIME -->
+        <!-- ========================= -->
+
+        <div class="form-group">
+
+            <label for="endTime">
+
+                End Time
+
+                <span class="required">*</span>
+
+            </label>
+
+
+            <input type="time"
+                   id="endTime"
+                   name="endTime"
+                   required>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- BUTTONS -->
+        <!-- ========================= -->
+
+        <div class="button-section">
+
+            <button type="submit"
+                    class="btn btn-success">
+
+                Save Session
+
+            </button>
+
+
+            <a th:href="@{/sessions}"
+               class="btn btn-secondary">
+
+                Cancel
+
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

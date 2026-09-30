@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance Management</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        h1 {
+            text-align: center;
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin-bottom: 30px;
+        }
+
+
+        /* =========================
+           NAVIGATION BUTTONS
+        ========================= */
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .nav-btn {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 7px;
+            text-decoration: none;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .nav-btn:hover {
+            opacity: 0.85;
+            transform: translateY(-1px);
+        }
+
+        .student-btn {
+            background: #007bff;
+        }
+
+        .subject-btn {
+            background: #6f42c1;
+        }
+
+        .session-btn {
+            background: #fd7e14;
+        }
+
+        .attendance-btn {
+            background: #28a745;
+        }
+
+        .view-btn {
+            background: #17a2b8;
+        }
+
+        .home-btn {
+            background: #6c757d;
+        }
+
+
+        /* =========================
+           MESSAGES
+        ========================= */
+
+        .message {
+            padding: 13px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        select,
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+            background: white;
+        }
+
+        select:focus,
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .required {
+            color: red;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: #343a40;
+            color: white;
+            padding: 13px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        td {
+            padding: 13px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+
+        /* =========================
+           RADIO BUTTONS
+        ========================= */
+
+        .radio-label {
+            display: inline-block;
+            margin: 0 10px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .radio-label input {
+            width: auto;
+            margin-right: 5px;
+        }
+
+
+        /* =========================
+           SAVE BUTTON
+        ========================= */
+
+        .button-area {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 22px;
+            margin: 5px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #218838;
+        }
+
+
+        /* =========================
+           NO STUDENT DATA
+        ========================= */
+
+        .no-data {
+            padding: 30px;
+            color: #777;
+            text-align: center;
+        }
+
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 768px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                width: 100%;
+                padding: 15px;
+            }
+
+            .form-row {
+                flex-direction: column;
+            }
+
+            .navigation {
+                flex-direction: column;
+            }
+
+            .nav-btn {
+                text-align: center;
+                width: 100%;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 8px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+    <!-- ================================================= -->
+    <!-- HEADER -->
+    <!-- ================================================= -->
+
+    <h1>
+        Classroom Attendance Marking System
+    </h1>
+
+    <p class="subtitle">
+        Manage students, subjects, sessions and attendance
+    </p>
+
+
+    <!-- ================================================= -->
+    <!-- NAVIGATION BUTTONS -->
+    <!-- ================================================= -->
+
+    <div class="navigation">
+
+
+        <!-- STUDENTS -->
+
+        <a th:href="@{/students}"
+           class="nav-btn student-btn">
+
+            👨‍🎓 Students
+
+        </a>
+
+
+        <!-- SUBJECTS -->
+
+        <a th:href="@{/subjects}"
+           class="nav-btn subject-btn">
+
+            📚 Subjects
+
+        </a>
+
+
+        <!-- SESSIONS -->
+
+        <a th:href="@{/sessions}"
+           class="nav-btn session-btn">
+
+            📅 Sessions
+
+        </a>
+
+
+       
+
+        <!-- VIEW ATTENDANCE -->
+
+        <a th:href="@{/index/view}"
+           class="nav-btn view-btn">
+
+            📊 View Attendance
+
+        </a>
+
+
+      
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- SUCCESS MESSAGE -->
+    <!-- ================================================= -->
+
+    <div th:if="${success}"
+         class="message success"
+         th:text="${success}">
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ERROR MESSAGE -->
+    <!-- ================================================= -->
+
+    <div th:if="${error}"
+         class="message error"
+         th:text="${error}">
+    </div>
+
+
+    <!-- ================================================= -->
+    <!-- ATTENDANCE FORM -->
+    <!-- ================================================= -->
+
+    <form th:action="@{/index/save}"
+          method="post">
+
+
+        <!-- ================================================= -->
+        <!-- SESSION + DATE -->
+        <!-- ================================================= -->
+
+        <div class="form-row">
+
+
+            <!-- SESSION -->
+
+            <div class="form-group">
+
+                <label for="sessionId">
+
+                    Select Session
+
+                    <span class="required">
+                        *
+                    </span>
+
+                </label>
+
+
+                <select id="sessionId"
+                        name="sessionId"
+                        required>
+
+
+                    <option value="">
+                        -- Select Session --
+                    </option>
+
+
+                    <!--
+                        IMPORTANT:
+                        Use item, NOT session.
+                        This avoids the Thymeleaf
+                        "session variable" error.
+                    -->
+
+                    <option th:each="item : ${sessions}"
+                            th:value="${item.sessionId}"
+                            th:text="${item.subject.subjectCode
+                            + ' - '
+                            + item.subject.subjectName
+                            + ' | '
+                            + item.sessionDate
+                            + ' | '
+                            + item.startTime
+                            + ' - '
+                            + item.endTime}">
+                    </option>
+
+
+                </select>
+
+            </div>
+
+
+            <!-- DATE -->
+
+            <div class="form-group">
+
+                <label for="attendanceDate">
+
+                    Attendance Date
+
+                    <span class="required">
+                        *
+                    </span>
+
+                </label>
+
+
+                <input type="date"
+                       id="attendanceDate"
+                       name="attendanceDate"
+                       required>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ================================================= -->
+        <!-- STUDENT TABLE -->
+        <!-- ================================================= -->
+
+        <table>
+
+
+            <thead>
+
+            <tr>
+
+                <th>
+                    S.No
+                </th>
+
+                <th>
+                    Student ID
+                </th>
+
+                <th>
+                    Roll Number
+                </th>
+
+                <th>
+                    Student Name
+                </th>
+
+                <th>
+                    Attendance
+                </th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            <!-- ================================================= -->
+            <!-- STUDENT LIST -->
+            <!-- ================================================= -->
+
+            <tr th:each="student, stat : ${students}">
+
+
+                <!-- S.NO -->
+
+                <td th:text="${stat.count}">
+                    1
+                </td>
+
+
+                <!-- STUDENT ID -->
+
+                <td th:text="${student.studentId}">
+                    1
+                </td>
+
+
+                <!-- ROLL NUMBER -->
+
+                <td th:text="${student.rollNumber}">
+                    Roll Number
+                </td>
+
+
+                <!-- STUDENT NAME -->
+
+                <td th:text="${student.name}">
+                    Student Name
+                </td>
+
+
+                <!-- PRESENT / ABSENT -->
+
+                <td>
+
+
+                    <!-- PRESENT -->
+
+                    <label class="radio-label">
+
+                        <input type="radio"
+                               th:name="'attendance_' + ${student.studentId}"
+                               value="PRESENT"
+                               required>
+
+                        Present
+
+                    </label>
+
+
+                    <!-- ABSENT -->
+
+                    <label class="radio-label">
+
+                        <input type="radio"
+                               th:name="'attendance_' + ${student.studentId}"
+                               value="ABSENT">
+
+                        Absent
+
+                    </label>
+
+
+                </td>
+
+
+            </tr>
+
+
+            <!-- ================================================= -->
+            <!-- NO STUDENTS -->
+            <!-- ================================================= -->
+
+            <tr th:if="${students == null or students.isEmpty()}">
+
+                <td colspan="5"
+                    class="no-data">
+
+                    No students available.
+
+                    <br><br>
+
+                    Please add students first.
+
+                </td>
+
+            </tr>
+
+
+            </tbody>
+
+        </table>
+
+
+        <!-- ================================================= -->
+        <!-- SAVE -->
+        <!-- ================================================= -->
+
+        <div class="button-area">
+
+            <button type="submit"
+                    class="btn btn-save">
+
+                Save Attendance
+
+            </button>
+
+        </div>
+
+
+    </form>
+
+
+</div>
+
+
+</body>
+
+</html>
